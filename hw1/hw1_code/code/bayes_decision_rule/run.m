@@ -100,10 +100,19 @@ disp(p_test_error_w1 + p_test_error_w2);
 
 %% Part3 risk:
 risk = [0, 1; 2, 0];
+r = 0;
+
 %TODO
 %get the minimal risk using optimal bayes decision rule and risk weights
-bayes_error = [p_test_error_w2; p_test_error_w1];
-total_risk = sum(risk * bayes_error);
+for i=1:N
+    if p(1,i)*2 < p(2,i)*1 % always choose the class with min risk
+        r = r+p(1,i)*2;
+    else
+        r = r+p(2,i)*1;
+    end
+end
+
 
 disp("minimal total risk:");
-disp(total_risk);
+disp(r);
+
