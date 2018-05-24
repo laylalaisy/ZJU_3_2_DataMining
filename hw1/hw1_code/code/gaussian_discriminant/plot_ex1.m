@@ -21,7 +21,6 @@ y1 = X1(2,:);
 
 subplot(1, 4, mod(pos-1, 4)+1);
 
-
 xmin = min(min(x0), min(x1));
 xmax = max(max(x0), max(x1));
 ymin = min(min(y0), min(y1));
