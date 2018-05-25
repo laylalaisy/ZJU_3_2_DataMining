@@ -23,7 +23,7 @@ Please try yourself and have fun working on those interesting projects!
 1. hw0: Preview: Probaility and Statistics + Linear Algebra + Calculus
 2. hw1: Classification: Bayes Decision Rule + Gaussian Discriminant + Text Classification
 
-## NOTES:
+## Attention:
 1. All codes and notes will be open source after my final test (in case of copy)
 2. You are allowed to read all the codes and files, but you are not allowed to copy directly for your assignments.
 3. If you have any problems or ideas want to share with me, please feel free to e-mail to me: lsylayla@163.com / layla.laisy@gmail.com
