@@ -19,23 +19,20 @@ We assume our target function is
    (iii) What will happen if the training data is not linearly separable (Use mkdata(N,’noisy’) to generate non-linearly separable data) ?  
 
 - ###### Answer:
-(i)  Error: 
-![1_a_1_1](assets/1_a_1_1.JPG)     
-10：E_train: 0.000000 E_test: 0.408300
-![1_a_1_2](assets/1_a_1_2.JPG)
-100：E_train: 0.000700 E_test: 0.406150          
-(ii)   Average number of iterations(截图请看上图) : 
-10:  13  
-100: 178  
-(iii) non-linearly separable data：
-![1_a_3_1](assets/1_a_3_1.JPG) 
-![1_a_3_2](assets/1_a_3_2.JPG)
-If the training data is not linearly separable, the perceptron learning algorithm will eventually repeat the same set of weights and therefore enter an infinite loop. 从图中可以看出没有结束，直到达到了ttl的次数才强制结束。      
-
-   
+   (i)  Error: 
+   ![1_a_1_1](assets/1_a_1_1.JPG)     
+   10：E_train: 0.000000 E_test: 0.408300
+   ![1_a_1_2](assets/1_a_1_2.JPG)
+   100：E_train: 0.000700 E_test: 0.406150          
+   (ii)   Average number of iterations(截图请看上图) : 
+   10:  13  
+   100: 178  
+   (iii) non-linearly separable data：
+   ![1_a_3_1](assets/1_a_3_1.JPG) 
+   ![1_a_3_2](assets/1_a_3_2.JPG)
+   If the training data is not linearly separable, the perceptron learning algorithm will eventually repeat the same set of weights and therefore enter an infinite loop. 从图中可以看出没有结束，直到达到了ttl的次数才强制结束。      
 
 - ###### function_perceptron:
-
 ```matlab
 function [w, iter] = perceptron(X, y)
 % Perceptron Learning Algorithm.
@@ -72,7 +69,6 @@ end
 ```
 
 - ###### run:
-
 ```matlab
 nRep = 1000;      % number of replicates
 nTrain = 100;     % number of training data
@@ -155,12 +151,13 @@ https://blog.csdn.net/liuzhuomei0911/article/details/51585765
 
    Implement Linear Regression (in linear_regression.m), then answer the following questions.    
    Note that we use Linear Regression here to classify data points. This technique is called Linear Regression on indicator response matrix1.     
-(i) What is the training error rate and expected testing error rate if the size of
-training set is 100 ?
-(ii) What is the training error rate and expected testing error rate if the training data
-is noisy and not linearly separable (nTrain = 100) ?
-(iii) Run Linear Regression on dataset poly_train.mat. What is the training error
-rate? What is the testing error rate on poly_test.mat ?
+   (i) What is the training error rate and expected testing error rate if the size of training set is 100 ?
+   (ii) What is the training error rate and expected testing error rate if the training data is noisy and not linearly separable (nTrain = 100) ?
+   (iii) Run Linear Regression on dataset poly_train.mat. What is the training error rate? What is the testing error rate on poly_test.mat ?
+   (iv) Do the following data transformation
+   ![公式](assets/1_b_4.png)
+   on dataset poly_train.mat. After this transformation, what is the training error rate? What is the testing error rate on poly_test.mat ?
+
 - ###### function_linear:
 ```matlab
 function w = linear_regression(X, y)
