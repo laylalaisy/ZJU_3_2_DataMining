@@ -328,7 +328,7 @@ loss = -(1 / N) * (y * log(h)' + (1 - y) * log(1 - h)');    % loss value
 
 while(loss >= stop_loss && iter <= stop_iter)
     gradient = X * (h - y)';       % gradient: P+1 * 1;
-    w = w - learning_rate * gradient;   % update weight: 1 * N
+    w = w - learning_rate / N * gradient;   % update weight: 1 * N
     h = 1.0 ./ (1 + exp(-1.0 * w' * X));    % update h
     loss = -(1.0 / N) * (y * log(h)' + (1 - y) * log(1 - h)');    % update loss
     iter = iter + 1;
@@ -524,17 +524,185 @@ plotdata(X, y, w_f, w_g, 'SVM');
 ![1528211813301](assets/1528211813301.png)  
 ![1528211829046](assets/1528211829046.png)  
 
+## 2. Regularization and Cross- Validation
+### Question  
+![1528332485486](assets/1528332485486.png)  
+![1528332464903](assets/1528332464903.png)  
+
+### Answer
+(a) Ridge Regression  
+   (i)   
+![1528345183593](assets/1528345183593.png)  
+   (ii)  
+![1528344443210](assets/1528344443210.png)  
+   (iii)  
+![1528345099110](assets/1528345099110.png)  
+![1528345461495](assets/1528345461495.png)  
+(b) Logistic Regression
+
+![1528381006150](assets/1528381006150.png)
 
 
+### Normalization
 
+```matlab
+% Do feature normalization
+[P, N] = size(X);
 
+mean = zeros(P,1);
+for i = 1:P
+    mean(i,1) = sum(X(i, :)) / N;
+end
 
+variance = sqrt(var(X, 1, 2));
 
+for i = 1:P
+    for j = 1:N
+        X(i,j) = 1.0 * (X(i,j) - mean(i)) / variance(i);
+    end
+end
+```
 
+### Ridge Regression
+- Ridge:
+```matlab
+function w = ridge(X, y, lambda)
+%RIDGE Ridge Regression.
+%
+%   INPUT:  X: training sample features, P-by-N matrix.
+%           y: training sample labels, 1-by-N row vector.
+%           lambda: regularization parameter.
+%
+%   OUTPUT: w: learned parameters, (P+1)-by-1 column vector.
+%
 
+% YOUR CODE HERE
+[P, N] = size(X);
+X = [ones(1, N); X];
 
+w = inv(X * X' + lambda * eye(P+1)) * X * y';
+end
+```
 
+- Do LOOCV
+```matlab
+lambdas = [1e-3, 1e-2, 1e-1, 0, 1, 1e1, 1e2, 1e3];
+lambda = 0;
+E_val_min = 10000000000000;
 
+for i = 1:length(lambdas)
+    E_val = 0;
+    for j = 1:size(X, 2)
+        % take point j out of X
+        X_ = X; 
+        X_(:, j) = [];
+        y_ = y; 
+        y_(:, j) = [];
+        % get w
+        w = ridge(X_, y_, lambdas(i));
+        % single observation 
+        if(sign(w' * [1; X(:,j)]) ~= y(j))
+            E_val = E_val + 1;
+        end
+    end
+    % Update lambda according validation error
+    if E_val < E_val_min
+        E_val_min = E_val;
+        lambda = lambdas(i);
+    end
+end
 
+fprintf('Lambda chosen by LOOCV is %f.\n', lambda);
+```
+- Get weight
+``` matlab
+% without regression
+w_without = ridge(X, y, 1e-12);
+fprintf('Without regularization, the sum of omega square is %f.\n', w_without'*w_without);
 
+% with regression
+w_with = ridge(X, y, lambda);
+fprintf('With regularization, the sum of omega square is %f.\n', w_with'*w_with);
+```
+
+- Error
+```matlab
+% Compute training error
+[P, N] = size(X);
+y_predict_without = sign((w_without') * [ones(1,N);X]);
+E_train_without = sum(y_predict_without ~= y) * 1.0 / N;
+fprintf('Without regularization, the train error is %f.\n', E_train_without);
+y_predict_with = sign((w_with')*[ones(1,N);X]);
+E_train_with = sum(y_predict_with ~= y) * 1.0/N;
+fprintf('With regularization, the train error is %f.\n', E_train_with);
+```
+
+### Logistic Regulation
+```matlab
+function w = logistic_r(X, y, lambda)
+%LR Logistic Regression.
+%
+%   INPUT:  X:   training sample features, P-by-N matrix.
+%           y:   training sample labels, 1-by-N row vector.
+%           lambda: regularization parameter.
+%
+%   OUTPUT: w: learned parameters, (P+1)-by-1 column vector.
+%
+
+% YOUR CODE HERE
+y = (y == 1);
+
+[P, N] = size(X);       
+X = [ones(1, N); X];    % add 1 dimension to X for w0
+w = rand(P+1, 1);
+
+iter = 0;
+stop_iter = 1000;
+stop_loss = 0;
+learning_rate = 0.02;
+
+h = 1 ./ (1 + exp(-1 * w' * X));    % sigmoid function: 1 * N
+loss = -(1 / N) * (y * log(h)' + (1 - y) * log(1 - h)') + lambda / (2 *N) * (w' * w);    % loss value
+
+while(loss >= stop_loss && iter <= stop_iter)
+    gradient = X * (h - y)' + lambda * w;       % gradient: P+1 * 1;
+    w = w - learning_rate / N * gradient;   % update weight: 1 * N
+    h = 1.0 ./ (1 + exp(-1.0 * w' * X));    % update h
+    loss = -(1.0 / N) * (y * log(h)' + (1 - y) * log(1 - h)') + + lambda / (2 *N) * (w' * w);    % update loss
+    iter = iter + 1;
+end
+
+end
+```
+
+### Normalization  
+![1528333224842](assets/1528333224842.png)  
+Feature Normalization: to make the feature have zero-mean and
+unit-variance. 本题要求使用z-score标准化。   
+![1528333197552](assets/1528333197552.png)    
+var(X, W, dim) W:0求样本方差的无偏估计值（除以N-1）；1求样本方差（除以N）  
+
+### Ridge Regression  
+![1528332522669](assets/1528332522669.png) 
+
+### Logistic Regression  
+![1528381229389](assets/1528381229389.png)
+
+## Bias Variance Trade-off
+The intuition behind it is straight-forward: if the model is too simple, the learnt function is biased and does not fit the data. If the model is too complex then it is very sensitive to small changes in the data.   
+If we were able to sample a dataset D infinite many times, we will learn different g(x) for each time, and get an expected hypothesis g(x). So bias means the difference between the truth and what you expect to learn. It measures how well our model can approximate the truth at best.  
+However, it is impossible to sample the training dataset multiple time, so variance means the difference between what you learn from a particular dataset and what you expect to learn.  
+Now please answer the following questions:  
+(i) If a learning algorithm is suffering from high bias, adding more training examples will improve the test error significantly.  
+- False. Adding more training examples may lead to overfitting which will increase the test error.  
+(ii) We always prefer models with high variance (over those with high bias) as they will able to better fit the training set.  
+- False. Models with high variance may not always better fit the training set.  
+(iii) A model with more parameters is more prone to overfitting and typically has higher variance.  
+- True. More model parameters increases the model's complexity, so it can more tightly fit data in training, increasing the chances of overfitting.  
+(iv) Introducing regularization to the model always results in equal or better performance on the training set.
+- False. If over regularization, the result will turn to be worse.
+(v) Using a very large value of regularization parameter  cannot hurt the performance of your hypothesis.
+- False. Using a very large value of regularization parameter may hurt the performance.
+
+![1528383453510](assets/1528383453510.png)
 
