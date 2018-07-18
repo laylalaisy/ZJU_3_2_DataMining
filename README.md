@@ -22,6 +22,8 @@ Please try yourself and have fun working on those interesting projects!
 ## Homework Catalog
 1. hw0: Preview: Probaility and Statistics + Linear Algebra + Calculus
 2. hw1: Classification: Bayes Decision Rule + Gaussian Discriminant + Text Classification
+3. hw2: Linear Models + Regularization and Cross-Validation + Bias Variance Trade-off
+4. hw3: Neural Networks + K-Nearest Neighbor + Decision Tree and ID3 + K-Means Clustering
 
 ## Attention:
 1. All codes and notes will be open source after my final test (in case of copy)
